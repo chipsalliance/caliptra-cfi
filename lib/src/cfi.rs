@@ -24,43 +24,43 @@ use core::marker::Copy;
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub enum CfiPanicInfo {
     /// CFI Counter decode error
-    CounterCorrupt,
+    CounterCorrupt = 0x1040051,
 
     /// CFI Counter overflow
-    CounterOverflow,
+    CounterOverflow = 0x1040052,
 
     /// CFI Counter underflow
-    CounterUnderflow,
+    CounterUnderflow = 0x1040053,
 
     /// CFI Counter mismatch
-    CounterMismatch,
+    CounterMismatch = 0x1040054,
 
     /// CFI Assert Equal failed
-    AssertEqFail,
+    AssertEqFail = 0x1040055,
 
     /// CFI Assert Not Equal failed
-    AssertNeFail,
+    AssertNeFail = 0x1040056,
 
     /// CFI Greater Than failed
-    AssertGtFail,
+    AssertGtFail = 0x1040057,
 
     /// CFI Less Than failed
-    AssertLtFail,
+    AssertLtFail = 0x1040058,
 
     /// CFI Greater Than Equal failed
-    AssertGeFail,
+    AssertGeFail = 0x1040059,
 
     /// CFI Less Than Equal failed
-    AssertLeFail,
+    AssertLeFail = 0x104005A,
 
     /// Random number generator error
-    TrngError,
+    TrngError = 0x104005B,
 
     /// An enum match statement finds an unexpected value.
-    UnexpectedMatchBranch,
+    UnexpectedMatchBranch = 0x104005C,
 
     /// Unknown error
-    UnknownError,
+    UnknownError = 0x1040050,
 }
 
 /// Launder the value to prevent compiler optimization
@@ -108,10 +108,10 @@ pub fn cfi_panic(info: CfiPanicInfo) -> ! {
         #[cfg(not(feature = "cfi-test"))]
         {
             extern "C" {
-                fn cfi_panic_handler(info: CfiPanicInfo) -> !;
+                fn cfi_panic_handler(code: u32) -> !;
             }
             unsafe {
-                cfi_panic_handler(info);
+                cfi_panic_handler(info.into());
             }
         }
     }
@@ -187,7 +187,7 @@ pub fn cfi_assert_eq_12_words(a: &[u32; 12], b: &[u32; 12]) {
         core::arch::asm!(
             "j 3f",
             "2:",
-            "li a0, 0x4",
+            "li a0, 0x1040055",
             "j cfi_panic_handler",
             "3:",
             "lw {tmp0}, 0(a4)",
@@ -251,7 +251,7 @@ pub fn cfi_assert_eq_8_words(a: &[u32; 8], b: &[u32; 8]) {
         core::arch::asm!(
             "j 3f",
             "2:",
-            "li a0, 0x4",
+            "li a0, 0x1040055",
             "j cfi_panic_handler",
             "3:",
             "lw {tmp0}, 0(a4)",
@@ -303,7 +303,7 @@ pub fn cfi_assert_eq_6_words(a: &[u32; 6], b: &[u32; 6]) {
         core::arch::asm!(
             "j 3f",
             "2:",
-            "li a0, 0x4",
+            "li a0, 0x1040055",
             "j cfi_panic_handler",
             "3:",
             "lw {tmp0}, 0(a4)",
