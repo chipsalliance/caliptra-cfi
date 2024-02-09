@@ -1,15 +1,13 @@
+# Licensed under the Apache-2.0 license
+
 #!/bin/bash
 
 set -e
 
 # Build and test
-cd derive
 cargo build
-cd ..
-cd lib
-cargo build
-cargo test
-
+cargo install cross
+cross test --target riscv64gc-unknown-linux-gnu
 
 # Check formatting
 cargo fmt -- --check
