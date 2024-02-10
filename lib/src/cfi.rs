@@ -111,7 +111,7 @@ pub fn cfi_panic(info: CfiPanicInfo) -> ! {
                 fn cfi_panic_handler(code: u32) -> !;
             }
             unsafe {
-                cfi_panic_handler(info.into());
+                cfi_panic_handler(info as u32);
             }
         }
     }
