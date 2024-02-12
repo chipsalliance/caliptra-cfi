@@ -1,7 +1,7 @@
 # Licensed under the Apache-2.0 license
 
 [package]
-name = "caliptra-cfi-lib"
+name = "caliptra-cfi-lib-git"
 version = "0.1.0"
 edition = "2021"
 
@@ -9,7 +9,7 @@ edition = "2021"
 doctest = false
 
 [dev-dependencies]
-caliptra-cfi-derive = { version = "0.1.0", path = "../derive" }
+caliptra-cfi-derive-git = { version = "0.1.0", path = "../derive" }
 serial_test = "2.0.0"
 
 [features]
