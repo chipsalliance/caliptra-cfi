@@ -8,8 +8,8 @@ File Name:
 
 --*/
 
-use caliptra_cfi_derive::{cfi_impl_fn, cfi_mod_fn};
-use caliptra_cfi_lib::{CfiCounter, Xoshiro128};
+use caliptra_cfi_derive_git::{cfi_impl_fn, cfi_mod_fn};
+use caliptra_cfi_lib_git::{CfiCounter, Xoshiro128};
 use serial_test::serial;
 
 #[cfi_mod_fn]
