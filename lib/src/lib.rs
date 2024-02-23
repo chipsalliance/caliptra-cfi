@@ -19,6 +19,8 @@ pub use cfi::*;
 pub use cfi_counter::{CfiCounter, CfiInt};
 pub use xoshiro::Xoshiro128;
 
+use core::cell::UnsafeCell;
+
 #[repr(C)]
 pub struct CfiState {
     val: u32,
@@ -36,5 +38,5 @@ static mut CFI_STATE: CfiState = CfiState {
 #[cfg(not(feature = "cfi-test"))]
 extern "C" {
     #[link_name = "CFI_STATE_ORG"]
-    static mut CFI_STATE: CfiState;
+    static CFI_STATE: UnsafeCell<CfiState>;
 }
