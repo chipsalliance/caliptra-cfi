@@ -18,11 +18,11 @@ thread_local! {
 }
 
 #[no_mangle]
-extern "C" fn cfi_panic_handler(code: u32) -> ! {
+extern "C" fn cfi_panic_handler(info: CfiPanicInfo) -> ! {
     // This function cannot return or panic, so the only way we have to detect
     // this call is to set a thread-local variable that can be checked from
     // another thread before hanging this thread forever.
-    CFI_PANIC_CALLED.with(|c| c.borrow_mut().store(code, Relaxed));
+    CFI_PANIC_CALLED.with(|c| c.borrow_mut().store(info as u32, Relaxed));
 
     #[allow(clippy::empty_loop)]
     loop {
