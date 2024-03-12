@@ -15,7 +15,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
 
 [[package]]
-name = "caliptra-cfi-derive-git"
+name = "caliptra-cfi-derive"
 version = "0.1.0"
 dependencies = [
  "paste",
@@ -25,10 +25,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "caliptra-cfi-lib-git"
+name = "caliptra-cfi-lib"
 version = "0.1.0"
 dependencies = [
- "caliptra-cfi-derive-git",
+ "caliptra-cfi-derive",
  "serial_test",
 ]
 

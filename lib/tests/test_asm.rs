@@ -11,7 +11,7 @@ use std::sync::atomic::{AtomicU32, Ordering::Relaxed};
 use std::sync::Arc;
 use std::time::Duration;
 
-use caliptra_cfi_lib_git::CfiPanicInfo;
+use caliptra_cfi_lib::CfiPanicInfo;
 
 thread_local! {
     static CFI_PANIC_CALLED: RefCell<Arc<AtomicU32>> = RefCell::new(Arc::new(0.into()));
@@ -33,7 +33,7 @@ extern "C" fn cfi_panic_handler(code: u32) -> ! {
 #[test]
 pub fn test_assert_eq_12words_success() {
     CFI_PANIC_CALLED.with(|c| c.borrow_mut().store(0, Relaxed));
-    use caliptra_cfi_lib_git::cfi_assert_eq_12_words;
+    use caliptra_cfi_lib::cfi_assert_eq_12_words;
     let a = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
     let b = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
     // Make sure these are separate memory addresses
@@ -45,7 +45,7 @@ pub fn test_assert_eq_12words_success() {
 #[cfg(any(target_arch = "riscv32", target_arch = "riscv64"))]
 #[test]
 pub fn test_assert_eq_12words_failure() {
-    use caliptra_cfi_lib_git::cfi_assert_eq_12_words;
+    use caliptra_cfi_lib::cfi_assert_eq_12_words;
 
     let cfi_panic_called = Arc::new(AtomicU32::new(0));
     let cfi_panic_called2 = cfi_panic_called.clone();
@@ -71,7 +71,7 @@ pub fn test_assert_eq_12words_failure() {
 #[test]
 pub fn test_assert_eq_8words_success() {
     CFI_PANIC_CALLED.with(|c| c.borrow_mut().store(0, Relaxed));
-    use caliptra_cfi_lib_git::cfi_assert_eq_8_words;
+    use caliptra_cfi_lib::cfi_assert_eq_8_words;
     let a = [0, 1, 2, 3, 4, 5, 6, 7];
     let b = [0, 1, 2, 3, 4, 5, 6, 7];
     // Make sure these are separate memory addresses
@@ -83,7 +83,7 @@ pub fn test_assert_eq_8words_success() {
 #[cfg(any(target_arch = "riscv32", target_arch = "riscv64"))]
 #[test]
 pub fn test_assert_eq_8words_failure() {
-    use caliptra_cfi_lib_git::cfi_assert_eq_8_words;
+    use caliptra_cfi_lib::cfi_assert_eq_8_words;
 
     let cfi_panic_called = Arc::new(AtomicU32::new(0));
     let cfi_panic_called2 = cfi_panic_called.clone();
@@ -106,7 +106,7 @@ pub fn test_assert_eq_8words_failure() {
 #[test]
 pub fn test_assert_eq_6words_success() {
     CFI_PANIC_CALLED.with(|c| c.borrow_mut().store(0, Relaxed));
-    use caliptra_cfi_lib_git::cfi_assert_eq_6_words;
+    use caliptra_cfi_lib::cfi_assert_eq_6_words;
     let a = [0, 1, 2, 3, 4, 5];
     let b = [0, 1, 2, 3, 4, 5];
     // Make sure these are separate memory addresses
@@ -118,7 +118,7 @@ pub fn test_assert_eq_6words_success() {
 #[cfg(any(target_arch = "riscv32", target_arch = "riscv64"))]
 #[test]
 pub fn test_assert_eq_6words_failure() {
-    use caliptra_cfi_lib_git::cfi_assert_eq_6_words;
+    use caliptra_cfi_lib::cfi_assert_eq_6_words;
 
     let cfi_panic_called = Arc::new(AtomicU32::new(0));
     let cfi_panic_called2 = cfi_panic_called.clone();
