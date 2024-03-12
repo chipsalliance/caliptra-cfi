@@ -24,37 +24,37 @@ use core::marker::Copy;
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub enum CfiPanicInfo {
     /// CFI Counter decode error
-    CounterCorrupt = 0x1040051,
+    CounterCorrupt,
 
     /// CFI Counter overflow
-    CounterOverflow = 0x1040052,
+    CounterOverflow,
 
     /// CFI Counter underflow
-    CounterUnderflow = 0x1040053,
+    CounterUnderflow,
 
     /// CFI Counter mismatch
-    CounterMismatch = 0x1040054,
+    CounterMismatch,
 
     /// CFI Assert Equal failed
-    AssertEqFail = 0x1040055,
+    AssertEqFail,
 
     /// CFI Assert Not Equal failed
-    AssertNeFail = 0x1040056,
+    AssertNeFail,
 
     /// CFI Greater Than failed
-    AssertGtFail = 0x1040057,
+    AssertGtFail,
 
     /// CFI Less Than failed
-    AssertLtFail = 0x1040058,
+    AssertLtFail,
 
     /// CFI Greater Than Equal failed
-    AssertGeFail = 0x1040059,
+    AssertGeFail,
 
     /// CFI Less Than Equal failed
-    AssertLeFail = 0x104005A,
+    AssertLeFail,
 
     /// Random number generator error
-    TrngError = 0x104005B,
+    TrngError,
 
     /// An enum match statement finds an unexpected value.
     UnexpectedMatchBranch = 0x104005C,
@@ -108,10 +108,10 @@ pub fn cfi_panic(info: CfiPanicInfo) -> ! {
         #[cfg(not(feature = "cfi-test"))]
         {
             extern "C" {
-                fn cfi_panic_handler(code: u32) -> !;
+                fn cfi_panic_handler(info: CfiPanicInfo) -> !;
             }
             unsafe {
-                cfi_panic_handler(info as u32);
+                cfi_panic_handler(info);
             }
         }
     }
@@ -187,7 +187,7 @@ pub fn cfi_assert_eq_12_words(a: &[u32; 12], b: &[u32; 12]) {
         core::arch::asm!(
             "j 3f",
             "2:",
-            "li a0, 0x1040055",
+            "li a0, 0x04", // 0x04 corresponds to CfiPanicInfo::AssertEqFail
             "j cfi_panic_handler",
             "3:",
             "lw {tmp0}, 0(a4)",
@@ -251,7 +251,7 @@ pub fn cfi_assert_eq_8_words(a: &[u32; 8], b: &[u32; 8]) {
         core::arch::asm!(
             "j 3f",
             "2:",
-            "li a0, 0x1040055",
+            "li a0, 0x04", // 0x04 corresponds to CfiPanicInfo::AssertEqFail
             "j cfi_panic_handler",
             "3:",
             "lw {tmp0}, 0(a4)",
@@ -303,7 +303,7 @@ pub fn cfi_assert_eq_6_words(a: &[u32; 6], b: &[u32; 6]) {
         core::arch::asm!(
             "j 3f",
             "2:",
-            "li a0, 0x1040055",
+            "li a0, 0x04", // 0x04 corresponds to CfiPanicInfo::AssertEqFail
             "j cfi_panic_handler",
             "3:",
             "lw {tmp0}, 0(a4)",
