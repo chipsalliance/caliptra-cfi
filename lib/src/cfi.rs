@@ -23,6 +23,9 @@ use core::marker::Copy;
 #[repr(C)]
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub enum CfiPanicInfo {
+    /// Unknown error
+    UnknownError,
+
     /// CFI Counter decode error
     CounterCorrupt,
 
@@ -57,10 +60,7 @@ pub enum CfiPanicInfo {
     TrngError,
 
     /// An enum match statement finds an unexpected value.
-    UnexpectedMatchBranch = 0x104005C,
-
-    /// Unknown error
-    UnknownError = 0x1040050,
+    UnexpectedMatchBranch,
 }
 
 /// Launder the value to prevent compiler optimization
@@ -187,7 +187,7 @@ pub fn cfi_assert_eq_12_words(a: &[u32; 12], b: &[u32; 12]) {
         core::arch::asm!(
             "j 3f",
             "2:",
-            "li a0, 0x04", // 0x04 corresponds to CfiPanicInfo::AssertEqFail
+            "li a0, 0x05", // 0x05 corresponds to CfiPanicInfo::AssertEqFail
             "j cfi_panic_handler",
             "3:",
             "lw {tmp0}, 0(a4)",
@@ -251,7 +251,7 @@ pub fn cfi_assert_eq_8_words(a: &[u32; 8], b: &[u32; 8]) {
         core::arch::asm!(
             "j 3f",
             "2:",
-            "li a0, 0x04", // 0x04 corresponds to CfiPanicInfo::AssertEqFail
+            "li a0, 0x05", // 0x05 corresponds to CfiPanicInfo::AssertEqFail
             "j cfi_panic_handler",
             "3:",
             "lw {tmp0}, 0(a4)",
@@ -303,7 +303,7 @@ pub fn cfi_assert_eq_6_words(a: &[u32; 6], b: &[u32; 6]) {
         core::arch::asm!(
             "j 3f",
             "2:",
-            "li a0, 0x04", // 0x04 corresponds to CfiPanicInfo::AssertEqFail
+            "li a0, 0x05", // 0x05 corresponds to CfiPanicInfo::AssertEqFail
             "j cfi_panic_handler",
             "3:",
             "lw {tmp0}, 0(a4)",
