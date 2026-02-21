@@ -11,7 +11,7 @@ use std::sync::atomic::{AtomicU32, Ordering::Relaxed};
 use std::sync::Arc;
 use std::time::Duration;
 
-use caliptra_error::CaliptraError;
+use caliptra_cfi_lib::CfiError;
 
 thread_local! {
     static CFI_PANIC_CALLED: RefCell<Arc<AtomicU32>> = RefCell::new(Arc::new(0.into()));
@@ -63,7 +63,7 @@ pub fn test_assert_eq_12words_failure() {
             break val;
         }
     };
-    assert_eq!(val, CaliptraError::ROM_CFI_PANIC_ASSERT_EQ_FAILURE.into());
+    assert_eq!(val, CfiError::ROM_CFI_PANIC_ASSERT_EQ_FAILURE.into());
 
     // Leak thread in infinite loop...
 }
@@ -98,7 +98,7 @@ pub fn test_assert_eq_8words_failure() {
             break val;
         }
     };
-    assert_eq!(val, CaliptraError::ROM_CFI_PANIC_ASSERT_EQ_FAILURE.into());
+    assert_eq!(val, CfiError::ROM_CFI_PANIC_ASSERT_EQ_FAILURE.into());
 
     // Leak thread in infinite loop...
 }
@@ -133,7 +133,7 @@ pub fn test_assert_eq_6words_failure() {
             break val;
         }
     };
-    assert_eq!(val, CaliptraError::ROM_CFI_PANIC_ASSERT_EQ_FAILURE.into());
+    assert_eq!(val, CfiError::ROM_CFI_PANIC_ASSERT_EQ_FAILURE.into());
 
     // Leak thread in infinite loop...
 }

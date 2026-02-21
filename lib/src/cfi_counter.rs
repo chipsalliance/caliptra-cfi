@@ -16,7 +16,7 @@ References:
 
 --*/
 
-use caliptra_error::CaliptraResult;
+use crate::error::CfiResult;
 
 use crate::cfi::{cfi_panic, CfiPanicInfo};
 use crate::xoshiro::Xoshiro128;
@@ -74,7 +74,7 @@ pub enum CfiCounter {}
 impl CfiCounter {
     /// Reset counter
     #[inline(always)]
-    pub fn reset(entropy_gen: &mut impl FnMut() -> CaliptraResult<(u32, u32, u32, u32)>) {
+    pub fn reset(entropy_gen: &mut impl FnMut() -> CfiResult<(u32, u32, u32, u32)>) {
         prng().mix_entropy(entropy_gen);
         Self::reset_internal();
     }
