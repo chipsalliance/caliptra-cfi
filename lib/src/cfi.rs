@@ -63,6 +63,11 @@ pub enum CfiPanicInfo {
     UnknownError,
 }
 
+impl From<CfiPanicInfo> for u32 {
+    fn from(val: CfiPanicInfo) -> Self {
+        val as u32
+    }
+}
 
 /// Launder the value to prevent compiler optimization
 ///
