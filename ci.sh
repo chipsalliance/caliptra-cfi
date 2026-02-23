@@ -6,7 +6,8 @@ set -e
 
 # Build and test
 cargo build
-cargo install cross
+# TODO(clundin): Pin the Cross version
+cargo +1.93 install cross
 cross test --target riscv64gc-unknown-linux-gnu
 
 # Check formatting
