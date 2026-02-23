@@ -11,18 +11,18 @@ use std::sync::atomic::{AtomicU32, Ordering::Relaxed};
 use std::sync::Arc;
 use std::time::Duration;
 
-use caliptra_cfi_lib::CfiPanicInfo;
+use caliptra_error::CaliptraError;
 
 thread_local! {
     static CFI_PANIC_CALLED: RefCell<Arc<AtomicU32>> = RefCell::new(Arc::new(0.into()));
 }
 
 #[no_mangle]
-extern "C" fn cfi_panic_handler(info: CfiPanicInfo) -> ! {
+extern "C" fn cfi_panic_handler(code: u32) -> ! {
     // This function cannot return or panic, so the only way we have to detect
     // this call is to set a thread-local variable that can be checked from
     // another thread before hanging this thread forever.
-    CFI_PANIC_CALLED.with(|c| c.borrow_mut().store(info as u32, Relaxed));
+    CFI_PANIC_CALLED.with(|c| c.borrow_mut().store(code, Relaxed));
 
     #[allow(clippy::empty_loop)]
     loop {
@@ -63,7 +63,7 @@ pub fn test_assert_eq_12words_failure() {
             break val;
         }
     };
-    assert_eq!(val, CfiPanicInfo::AssertEqFail as u32);
+    assert_eq!(val, CaliptraError::ROM_CFI_PANIC_ASSERT_EQ_FAILURE.into());
 
     // Leak thread in infinite loop...
 }
@@ -98,7 +98,7 @@ pub fn test_assert_eq_8words_failure() {
             break val;
         }
     };
-    assert_eq!(val, CfiPanicInfo::AssertEqFail as u32);
+    assert_eq!(val, CaliptraError::ROM_CFI_PANIC_ASSERT_EQ_FAILURE.into());
 
     // Leak thread in infinite loop...
 }
@@ -133,7 +133,7 @@ pub fn test_assert_eq_6words_failure() {
             break val;
         }
     };
-    assert_eq!(val, CfiPanicInfo::AssertEqFail as u32);
+    assert_eq!(val, CaliptraError::ROM_CFI_PANIC_ASSERT_EQ_FAILURE.into());
 
     // Leak thread in infinite loop...
 }

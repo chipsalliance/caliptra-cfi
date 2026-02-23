@@ -15,8 +15,10 @@ References:
 
 --*/
 
-use crate::{cfi_panic, CfiPanicInfo};
 use core::cell::Cell;
+
+
+use crate::{cfi_panic, CfiPanicInfo};
 
 /// Provides an implementation of the xoshiro128** algorithm. This implementation is used
 /// on 32-bit when no seed is specified and an instance of the base Random class is constructed.
@@ -51,13 +53,16 @@ impl Xoshiro128 {
     }
 
     #[inline(never)]
-    pub fn mix_entropy(&self, entropy_gen: &mut impl FnMut() -> Result<[u32; 12], CfiPanicInfo>) {
+    pub fn mix_entropy(
+        &self,
+        entropy_gen: &mut impl FnMut() -> CaliptraResult<(u32, u32, u32, u32)>,
+    ) {
         loop {
             if let Ok(entropy) = entropy_gen() {
-                self.s0.set(self.s0.get() ^ entropy[0]);
-                self.s1.set(self.s1.get() ^ entropy[1]);
-                self.s2.set(self.s2.get() ^ entropy[2]);
-                self.s3.set(self.s3.get() ^ entropy[3]);
+                self.s0.set(self.s0.get() ^ entropy.0);
+                self.s1.set(self.s1.get() ^ entropy.1);
+                self.s2.set(self.s2.get() ^ entropy.2);
+                self.s3.set(self.s3.get() ^ entropy.3);
             } else {
                 cfi_panic(CfiPanicInfo::TrngError)
             }

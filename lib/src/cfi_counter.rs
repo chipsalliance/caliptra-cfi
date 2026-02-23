@@ -15,8 +15,12 @@ References:
     https://tf-m-user-guide.trustedfirmware.org/design_docs/tfm_physical_attack_mitigation.html
 
 --*/
+
+use caliptra_error::CaliptraResult;
+
 use crate::cfi::{cfi_panic, CfiPanicInfo};
-use crate::with_cfi_state;
+use crate::xoshiro::Xoshiro128;
+use crate::CFI_STATE;
 use core::default::Default;
 
 /// CFI Integer
@@ -59,14 +63,19 @@ impl Default for CfiInt {
     }
 }
 
+fn prng() -> &'static Xoshiro128 {
+    let cfi_state = &raw const CFI_STATE;
+    unsafe { &(*cfi_state).prng }
+}
+
 /// CFI counter
 pub enum CfiCounter {}
 
 impl CfiCounter {
     /// Reset counter
     #[inline(always)]
-    pub fn reset(entropy_gen: &mut impl FnMut() -> Result<[u32; 12], CfiPanicInfo>) {
-        with_cfi_state(|cfi_state| cfi_state.prng.mix_entropy(entropy_gen));
+    pub fn reset(entropy_gen: &mut impl FnMut() -> CaliptraResult<(u32, u32, u32, u32)>) {
+        prng().mix_entropy(entropy_gen);
         Self::reset_internal();
     }
 
@@ -151,7 +160,7 @@ impl CfiCounter {
 
     #[inline(never)]
     pub fn delay() {
-        let cycles = with_cfi_state(|cfi_state| cfi_state.prng.next() % 256);
+        let cycles = prng().next() % 256;
         let _real_cyc = 1 + cycles / 2;
         #[cfg(all(target_arch = "riscv32", feature = "cfi", feature = "cfi-counter"))]
         unsafe {
@@ -167,14 +176,19 @@ impl CfiCounter {
 
     /// Read counter value
     pub fn read() -> CfiInt {
-        with_cfi_state(|cfi_state| CfiInt::from_raw(cfi_state.val.get(), cfi_state.mask.get()))
+        unsafe {
+            CfiInt::from_raw(
+                core::ptr::read_volatile(&raw const CFI_STATE.val),
+                core::ptr::read_volatile(&raw const CFI_STATE.mask),
+            )
+        }
     }
 
     /// Write counter value
     fn write(val: CfiInt) {
-        with_cfi_state(|cfi_state| {
-            cfi_state.val.set(val.val);
-            cfi_state.mask.set(val.masked_val);
-        });
+        unsafe {
+            core::ptr::write_volatile(&raw mut CFI_STATE.val, val.val);
+            core::ptr::write_volatile(&raw mut CFI_STATE.mask, val.masked_val);
+        }
     }
 }

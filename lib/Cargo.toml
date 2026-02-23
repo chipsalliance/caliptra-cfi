@@ -17,4 +17,3 @@ default = ["cfi", "cfi-counter", "cfi-test"]
 cfi = []
 cfi-counter = []
 cfi-test = []
-
