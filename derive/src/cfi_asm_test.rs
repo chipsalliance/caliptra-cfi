@@ -59,6 +59,13 @@ fn launder(mut val: u32) -> u32 {
             ])
             .output()
             .expect("failed to compile");
+        if !p.status.success() {
+            eprintln!(
+                "Command output stdout: {} stderr: {}",
+                String::from_utf8_lossy(&p.stdout),
+                String::from_utf8_lossy(&p.stderr)
+            );
+        }
         assert!(p.status.success());
         std::fs::read_to_string(dst_path).expect("could not read asm file")
     }

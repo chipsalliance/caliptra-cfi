@@ -4,10 +4,11 @@
 
 set -e
 
+rustup target add riscv32imc-unknown-none-elf
+
 # Build and test
 cargo build
-# TODO(clundin): Pin the Cross version
-cargo +1.93 install cross
+cargo +1.93 install cross@0.2.5
 cross test --target riscv64gc-unknown-linux-gnu
 
 # Check formatting
