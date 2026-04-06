@@ -1,6 +1,7 @@
 # Licensed under the Apache-2.0 license
 
 [workspace]
+resolver = "2"
 members = [
     "derive",
     "lib",
