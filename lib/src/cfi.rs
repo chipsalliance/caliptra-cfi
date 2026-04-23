@@ -116,6 +116,7 @@ pub struct Launder<T> {
 //
 // When we're building for static analysis, reduce false positives by
 // short-circuiting the inline assembly block.
+#[cfg(not(miri))]
 impl LaunderTrait<u32> for Launder<u32> {
     #[allow(asm_sub_register)]
     fn launder(&self, val: u32) -> u32 {
@@ -133,6 +134,10 @@ impl LaunderTrait<u32> for Launder<u32> {
     }
 }
 
+#[cfg(miri)]
+impl LaunderTrait<u32> for Launder<u32> {}
+
+#[cfg(not(miri))]
 impl LaunderTrait<bool> for Launder<bool> {
     #[allow(asm_sub_register)]
     fn launder(&self, val: bool) -> bool {
@@ -148,6 +153,10 @@ impl LaunderTrait<bool> for Launder<bool> {
     }
 }
 
+#[cfg(miri)]
+impl LaunderTrait<bool> for Launder<bool> {}
+
+#[cfg(not(miri))]
 impl LaunderTrait<usize> for Launder<usize> {
     #[allow(asm_sub_register)]
     fn launder(&self, mut val: usize) -> usize {
@@ -162,8 +171,12 @@ impl LaunderTrait<usize> for Launder<usize> {
     }
 }
 
+#[cfg(miri)]
+impl LaunderTrait<usize> for Launder<usize> {}
+
 impl<const N: usize, T> LaunderTrait<[T; N]> for Launder<[T; N]> {}
 impl<'a, const N: usize, T> LaunderTrait<&'a [T; N]> for Launder<&'a [T; N]> {
+    #[cfg(not(miri))]
     fn launder(&self, val: &'a [T; N]) -> &'a [T; N] {
         let mut valp = val.as_ptr() as *const [T; N];
         // Safety: this is a no-op, since we don't modify the input.
